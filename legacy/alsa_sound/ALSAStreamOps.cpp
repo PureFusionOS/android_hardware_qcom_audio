@@ -2,6 +2,7 @@
  **
  ** Copyright 2008-2009 Wind River Systems
  ** Copyright (c) 2011, Code Aurora Forum. All rights reserved.
+ ** Copyright (C) 2017, Team DevElite. All rights reserved.
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -143,8 +144,10 @@ status_t ALSAStreamOps::set(int      *format,
     if (format) {
         switch(*format) {
             case AudioSystem::FORMAT_DEFAULT:
+                break;              
+            case AudioSystem::PCM_24_BIT:
+				iformat = SNDRV_PCM_FORMAT_S24_LE;
                 break;
-
             case AudioSystem::PCM_16_BIT:
                 iformat = SNDRV_PCM_FORMAT_S16_LE;
                 break;
@@ -171,6 +174,9 @@ status_t ALSAStreamOps::set(int      *format,
             return BAD_VALUE;
 
         switch(iformat) {
+			case SNDRV_PCM_FORMAT_S24_LE:
+				*format = AudioSystem::PCM_24_BIT;
+                break;
             case SNDRV_PCM_FORMAT_S16_LE:
                 *format = AudioSystem::PCM_16_BIT;
                 break;
@@ -328,6 +334,10 @@ int ALSAStreamOps::format() const
             break;
         case SNDRV_PCM_FORMAT_S16_LE:
             audioSystemFormat = AudioSystem::PCM_16_BIT;
+            break;
+            
+        case SNDRV_PCM_FORMAT_S24_LE:
+            audioSystemFormat = AudioSystem::PCM_24_BIT;
             break;
 
         default:
