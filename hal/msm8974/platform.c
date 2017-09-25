@@ -1803,7 +1803,7 @@ int platform_set_voice_volume(void *platform, int volume)
     struct platform_data *my_data = (struct platform_data *)platform;
     struct audio_device *adev = my_data->adev;
     struct mixer_ctl *ctl;
-    const char *mixer_ctl_name = "Voice Rx Volume";
+    const char *mixer_ctl_name = "Voice Rx Gain";
     int vol_index = 0, ret = 0;
 
     // Voice volume levels are mapped to adsp volume levels as follows.
@@ -1817,8 +1817,8 @@ int platform_set_voice_volume(void *platform, int volume)
               __func__, mixer_ctl_name);
         return -EINVAL;
     }
-    ALOGV("Setting voice volume index: %d", vol_index);
-    mixer_ctl_set_value(ctl, 0, vol_index);
+    ALOGV("Setting voice volume index: %d", set_values[0]);
+    mixer_ctl_set_array(ctl, set_values, ARRAY_SIZE(set_values));
 
     if (my_data->csd != NULL) {
         ret = my_data->csd->volume(ALL_SESSION_VSID, volume,
@@ -1852,7 +1852,7 @@ int platform_set_mic_mute(void *platform, bool state)
         return -EINVAL;
     }
     ALOGV("Setting voice mute state: %d", state);
-    mixer_ctl_set_value(ctl, 0, state);
+    mixer_ctl_set_array(ctl, set_values, ARRAY_SIZE(set_values));
 
     return ret;
 }
@@ -1887,7 +1887,7 @@ int platform_set_device_mute(void *platform, bool state, char *dir)
 
     ALOGV("%s: Setting device mute state: %d, mixer ctrl:%s",
           __func__,state, mixer_ctl_name);
-    mixer_ctl_set_value(ctl, 0, state);
+    mixer_ctl_set_array(ctl, set_values, ARRAY_SIZE(set_values));
 
     return ret;
 }
